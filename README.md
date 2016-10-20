@@ -1,4 +1,8 @@
-# README
+
+# Touch Drag and Drop Custom Events
+
+[![Circle CI](https://circleci.com/gh/Neilos/touch-dnd-custom-events.png?circle-token=6cb8eb4e95c3049d3fe5482e4fd85ee88274b9f1
+)](https://circleci.com/gh/Neilos/touch-dnd-custom-events)
 
 ## Installation
 
