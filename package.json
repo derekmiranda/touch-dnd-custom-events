@@ -1,6 +1,6 @@
 {
   "name": "touch-dnd-custom-events",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Intercepts touch events (`touchstart`, `touchmove`, `touchend`) on draggable html elements and generates custom drag and drop events instead",
   "main": "dist/index.js",
   "scripts": {
