@@ -14,8 +14,54 @@ describe('DataTransfer', function() {
   })
 
   describe('#setDragImage', function () {
-    xit('does something important', function () {
-      // ??????
+    var clonedDragImageElement = {
+      clientWidth: 32,
+      clientHeight: 67
+    }
+
+    var dragImageElement = {
+      cloneNode: function () { return clonedDragImageElement },
+      clientWidth: 32,
+      clientHeight: 67
+    }
+
+    var x = 10
+    var y = 21
+
+    context('when there is NO store', function () {
+      it('does NOT store the preview element', function () {
+        dataTransfer = new DataTransfer(undefined)
+        dataTransfer.setDragImage(dragImageElement, x, y)
+        expect(store.dragPreviewElement).to.equal(undefined)
+      })
+    })
+
+    context('when store mode is NOT "readwrite"', function () {
+      it('does NOT store the preview element', function () {
+        store = { mode: "notreadwrite" }
+        dataTransfer = new DataTransfer(store)
+        dataTransfer.setDragImage(dragImageElement, x, y)
+        expect(store.dragPreviewElement).to.equal(undefined)
+      })
+    })
+
+    context('when store mode is "readwrite"', function () {
+      it('stores a clone of the preview element', function () {
+        dataTransfer.setDragImage(dragImageElement, x, y)
+        expect(store.dragPreviewElement).to.equal(clonedDragImageElement)
+      })
+
+      it("stores the preview element's position", function () {
+        dataTransfer.setDragImage(dragImageElement, x, y)
+        expect(store.dragPreviewX).to.equal(x)
+        expect(store.dragPreviewY).to.equal(y)
+      })
+
+      it("stores the preview element's dimensions", function () {
+        dataTransfer.setDragImage(dragImageElement, x, y)
+        expect(store.dragPreviewWidth).to.equal(32)
+        expect(store.dragPreviewHeight).to.equal(67)
+      })
     })
   })
 

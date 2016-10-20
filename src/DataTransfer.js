@@ -12,7 +12,16 @@ function DataTransfer(store) {
 }
 
 DataTransfer.prototype.setDragImage = function (element, x, y) {
-  // ??????????? What to do?
+  if (!this.store) { return }
+  if (this.store.mode !== "readwrite") { return }
+
+  var preview = element.cloneNode(true)
+
+  this.store.dragPreviewElement = preview
+  this.store.dragPreviewX = x
+  this.store.dragPreviewY = y
+  this.store.dragPreviewWidth = element.clientWidth
+  this.store.dragPreviewHeight = element.clientHeight
 }
 
 DataTransfer.prototype.getData = function (format) {
