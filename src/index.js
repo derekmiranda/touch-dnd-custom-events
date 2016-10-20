@@ -1,4 +1,3 @@
-import DragDataStore from './DragDataStore'
 import DataTransfer from './DataTransfer'
 import simulateEvent from './simulateEvent'
 import { updateDragPreview, removeDragPreview } from './dragPreview'
@@ -25,7 +24,7 @@ function handleTouchStart (event) {
 
     var target = document.elementFromPoint(x, y)
 
-    var store = new DragDataStore()
+    var store = {}
     var dataTransfer = new DataTransfer(store)
     touchDndCustomEvents.store = store
     touchDndCustomEvents.dataTransfer = dataTransfer
