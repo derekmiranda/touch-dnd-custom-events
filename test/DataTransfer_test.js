@@ -14,8 +14,56 @@ describe('DataTransfer', function() {
   })
 
   describe('#setDragImage', function () {
-    xit('does something important', function () {
-      // ??????
+    var clonedDragImageElement = {
+      clientWidth: 32,
+      clientHeight: 67
+    }
+
+    var dragImageElement = {
+      cloneNode: function () { return clonedDragImageElement },
+      clientWidth: 32,
+      clientHeight: 67
+    }
+
+    var x = 10
+    var y = 21
+
+    context('when there is NO store', function () {
+      it('does NOT store the preview element', function () {
+        dataTransfer = new DataTransfer(undefined)
+        dataTransfer.setDragImage(dragImageElement, x, y)
+        expect(store.dragPreviewElement).to.equal(undefined)
+      })
+    })
+
+    context('when store mode is NOT "readwrite"', function () {
+      it('does NOT store the preview element', function () {
+        store = { mode: "notreadwrite" }
+        dataTransfer = new DataTransfer(store)
+        dataTransfer.setDragImage(dragImageElement, x, y)
+        expect(store.dragPreviewElement).to.equal(undefined)
+      })
+    })
+
+    context('when store mode is "readwrite"', function () {
+      it('stores a clone of the preview element', function () {
+        dataTransfer.setDragImage(dragImageElement, x, y)
+        expect(store.dragPreviewElement).to.equal(clonedDragImageElement)
+      })
+
+      describe('the cloned dragPreviewElement', function () {
+        it("knows its offset from the touch point", function () {
+          dataTransfer.setDragImage(dragImageElement, x, y)
+          expect(clonedDragImageElement.dragPointOffsetX).to.equal(-x)
+          expect(clonedDragImageElement.dragPointOffsetY).to.equal(-y)
+        })
+
+        it("knows its dimensions", function () {
+          dataTransfer.setDragImage(dragImageElement, x, y)
+          expect(clonedDragImageElement.width).to.equal(32)
+          expect(clonedDragImageElement.height).to.equal(67)
+        })
+      })
     })
   })
 

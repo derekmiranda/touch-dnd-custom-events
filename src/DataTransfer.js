@@ -1,7 +1,7 @@
 import FileList from './FileList'
 import parseTextUriList from './parseTextUriList'
 
-// DataTransfer objects are used to expose the drag data store that underlies a drag-and-drop operation.
+// DataTransfer objects expose the drag data store
 // https://html.spec.whatwg.org/multipage/interaction.html#datatransferitem
 function DataTransfer(store) {
   this.store = store
@@ -12,7 +12,16 @@ function DataTransfer(store) {
 }
 
 DataTransfer.prototype.setDragImage = function (element, x, y) {
-  // ??????????? What to do?
+  if (!this.store) { return }
+  if (this.store.mode !== "readwrite") { return }
+
+  var preview = element.cloneNode(true)
+  preview.width = element.clientWidth
+  preview.height = element.clientHeight
+  preview.dragPointOffsetX = -x
+  preview.dragPointOffsetY = -y
+
+  this.store.dragPreviewElement = preview
 }
 
 DataTransfer.prototype.getData = function (format) {
