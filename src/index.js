@@ -1,146 +1,96 @@
 import DragDataStore from './DragDataStore'
 import DataTransfer from './DataTransfer'
 import simulateEvent from './simulateEvent'
+import { updateDragPreview, removeDragPreview } from './dragPreview'
 
 export default function setupTouchDNDCustomEvents() {
-  window.touchDnd = {
+  window.touchDndCustomEvents = {
     store: null,
     dataTransfer: null,
     lastDraggedOver: null,
     draggedItem: null,
-    clientX: 0,
-    clientY: 0
   }
-
-  var touchDnd = window.touchDnd
 
   document.addEventListener('touchstart', handleTouchStart, true)
   document.addEventListener('touchend', handleTouchEnd, true)
   document.addEventListener('touchmove', handleTouchMove, true)
 }
 
-function updateDragPreview(store, clientX, clientY) {
-  var top = clientY - store.dragPreviewY
-  var left = clientX - store.dragPreviewX
-  var width = store.dragPreviewWidth
-  var height = store.dragPreviewHeight
-
-  var style = 'position:fixed; top:' + top + 'px; left:' + left + 'px; width:' + width + 'px; height:' +  height + 'px;'
-
-  var previewContainer = document.getElementById('touchDndPreviewContainer')
-  if (previewContainer) {
-    previewContainer.style = style;
-  } else {
-    previewContainer = document.createElement("div")
-    previewContainer.id = 'touchDndPreviewContainer'
-    previewContainer.appendChild(store.dragPreviewElement)
-    previewContainer.style = style;
-    document.body.appendChild(previewContainer)
-  }
-
-  return previewContainer
-}
-
-function removeDragPreview() {
-  var previewContainer = document.getElementById('touchDndPreviewContainer')
-  if (previewContainer) {
-    document.body.removeChild(previewContainer)
-  }
-}
-
 function handleTouchStart (event) {
   if (event.target.hasAttribute("draggable")) {
     event.preventDefault()
 
-    touchDnd.clientX = event.changedTouches[0].clientX
-    touchDnd.clientY = event.changedTouches[0].clientY
+    var x = event.changedTouches[0].clientX
+    var y = event.changedTouches[0].clientY
 
-    var target = document.elementFromPoint(touchDnd.clientX, touchDnd.clientY)
+    var target = document.elementFromPoint(x, y)
 
     var store = new DragDataStore()
     var dataTransfer = new DataTransfer(store)
-
-    touchDnd.store = store
-    touchDnd.dataTransfer = dataTransfer
-    touchDnd.draggedItem = target
+    touchDndCustomEvents.store = store
+    touchDndCustomEvents.dataTransfer = dataTransfer
+    touchDndCustomEvents.draggedItem = target
 
     store.mode = 'readwrite'
-
     simulateEvent('touchdragstart', event, dataTransfer, target)
 
-    var previewContainer = updateDragPreview(
-      touchDnd.store,
-      touchDnd.clientX,
-      touchDnd.clientY
-    )
+    var dragPreview = store.dragPreviewElement
+    updateDragPreview(dragPreview, x, y)
   }
 }
 
 function handleTouchMove (event) {
-  if (touchDnd.draggedItem) {
+  if (touchDndCustomEvents.draggedItem) {
     event.preventDefault()
 
-    touchDnd.clientX = event.changedTouches[0].clientX
-    touchDnd.clientY = event.changedTouches[0].clientY
+    var x = event.changedTouches[0].clientX
+    var y = event.changedTouches[0].clientY
+    var dataTransfer = touchDndCustomEvents.dataTransfer
+    var draggedItem = touchDndCustomEvents.draggedItem
+    var dragPreview = touchDndCustomEvents.store.dragPreviewElement
+    var previewContainer = updateDragPreview(dragPreview, x, y)
 
-    touchDnd.store.mode = 'readwrite'
-
-    var previewContainer = updateDragPreview(
-      touchDnd.store,
-      touchDnd.clientX,
-      touchDnd.clientY
-    )
-
-    var dataTransfer = touchDnd.dataTransfer
-
-    simulateEvent('touchdrag', event, dataTransfer, touchDnd.draggedItem)
-
-    var lastDraggedOver = touchDnd.lastDraggedOver
+    touchDndCustomEvents.store.mode = 'readwrite'
+    simulateEvent('touchdrag', event, dataTransfer, draggedItem)
 
     // hide dragPreview so we can get the element underneath
     previewContainer.hidden = true
-    var draggedOverTarget = document.elementFromPoint(
-      touchDnd.clientX,
-      touchDnd.clientY
-    )
+    var draggedOver = document.elementFromPoint(x, y)
     previewContainer.hidden = false // show dragPreview again
 
-    if (lastDraggedOver !== draggedOverTarget) {
+    var lastDraggedOver = touchDndCustomEvents.lastDraggedOver
+    if (lastDraggedOver !== draggedOver) {
       if (lastDraggedOver) {
         simulateEvent('touchdragleave', event, dataTransfer, lastDraggedOver)
       }
+      simulateEvent('touchdragenter', event, dataTransfer, draggedOver)
 
-      simulateEvent('touchdragenter', event, dataTransfer, draggedOverTarget)
-
-      touchDnd.lastDraggedOver = draggedOverTarget
+      touchDndCustomEvents.lastDraggedOver = draggedOver
     }
   }
 }
 
 function handleTouchEnd (event) {
-  if (touchDnd.draggedItem) {
+  if (touchDndCustomEvents.draggedItem) {
     event.preventDefault()
 
-    touchDnd.clientX = event.changedTouches[0].clientX
-    touchDnd.clientY = event.changedTouches[0].clientY
+    var x = event.changedTouches[0].clientX
+    var y = event.changedTouches[0].clientY
+    var target = document.elementFromPoint(x, y)
 
-    var target = document.elementFromPoint(touchDnd.clientX, touchDnd.clientY)
+    var dataTransfer = touchDndCustomEvents.dataTransfer
 
-    var store = touchDnd.store
-    var dataTransfer = touchDnd.dataTransfer
-
-    store.mode = 'readonly'
+    touchDndCustomEvents.store.mode = 'readonly'
     simulateEvent('touchdrop', event, dataTransfer, target)
 
-    store.mode = 'protected'
+    touchDndCustomEvents.store.mode = 'protected'
     simulateEvent('touchdragend', event, dataTransfer, target)
 
-    touchDnd.store = null
-    touchDnd.dataTransfer = null
-    touchDnd.draggedItem = null
+    touchDndCustomEvents.store = null
+    touchDndCustomEvents.dataTransfer = null
+    touchDndCustomEvents.lastDraggedOver = null
+    touchDndCustomEvents.draggedItem = null
 
     removeDragPreview()
   }
 }
-
-

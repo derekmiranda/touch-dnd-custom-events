@@ -1,5 +1,5 @@
+// This implementation currently can represent only empty FileLists.
 // https://w3c.github.io/FileAPI/#filelist-section
-// NOTE: This implementation can represent only empty FileList.
 function FileList() {
   this.length = 0
 }

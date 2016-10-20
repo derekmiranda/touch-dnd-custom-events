@@ -51,16 +51,18 @@ describe('DataTransfer', function() {
         expect(store.dragPreviewElement).to.equal(clonedDragImageElement)
       })
 
-      it("stores the preview element's position", function () {
-        dataTransfer.setDragImage(dragImageElement, x, y)
-        expect(store.dragPreviewX).to.equal(x)
-        expect(store.dragPreviewY).to.equal(y)
-      })
+      describe('the cloned dragPreviewElement', function () {
+        it("knows its offset from the touch point", function () {
+          dataTransfer.setDragImage(dragImageElement, x, y)
+          expect(clonedDragImageElement.dragPointOffsetX).to.equal(-x)
+          expect(clonedDragImageElement.dragPointOffsetY).to.equal(-y)
+        })
 
-      it("stores the preview element's dimensions", function () {
-        dataTransfer.setDragImage(dragImageElement, x, y)
-        expect(store.dragPreviewWidth).to.equal(32)
-        expect(store.dragPreviewHeight).to.equal(67)
+        it("knows its dimensions", function () {
+          dataTransfer.setDragImage(dragImageElement, x, y)
+          expect(clonedDragImageElement.width).to.equal(32)
+          expect(clonedDragImageElement.height).to.equal(67)
+        })
       })
     })
   })
