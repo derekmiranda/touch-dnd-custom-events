@@ -10,9 +10,7 @@ function addDragPreview(preview) {
 
 function removeDragPreview() {
   var container = document.getElementById(ID)
-  if (container) {
-    document.body.removeChild(container)
-  }
+  if (container) { document.body.removeChild(container) }
 }
 
 function updateDragPreview(preview, x, y) {
