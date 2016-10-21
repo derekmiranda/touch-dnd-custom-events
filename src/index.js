@@ -2,10 +2,13 @@ import {removeDragPreview, updateDragPreview} from './dragPreview';
 import DataTransfer from './DataTransfer';
 import simulateEvent from './simulateEvent';
 
+const dragOverInterval = 300
+
 const touchDndCustomEvents = {
   'dataTransfer': null,
   'draggedItem': null,
   'lastDraggedOver': null,
+  'dragOvers': null,
   'store': null
 };
 
@@ -56,10 +59,15 @@ function handleTouchMove (event) {
     const lastDraggedOver = touchDndCustomEvents.lastDraggedOver;
     if (lastDraggedOver !== draggedOver) {
       if (lastDraggedOver) {
+        clearInterval(touchDndCustomEvents.dragOvers);
         simulateEvent('touchdragleave', event, dataTransfer, lastDraggedOver);
       }
 
       simulateEvent('touchdragenter', event, dataTransfer, draggedOver);
+
+      touchDndCustomEvents.dragOvers = setInterval(function(){
+        simulateEvent('touchdragover', event, dataTransfer, draggedOver);
+      }, dragOverInterval);
 
       touchDndCustomEvents.lastDraggedOver = draggedOver;
     }
@@ -75,6 +83,9 @@ function handleTouchEnd (event) {
     const target = document.elementFromPoint(x, y);
 
     const dataTransfer = touchDndCustomEvents.dataTransfer;
+
+    // Ensure dragover event generation is terminated
+    clearInterval(touchDndCustomEvents.dragOvers);
 
     touchDndCustomEvents.store.mode = 'readonly';
     simulateEvent('touchdrop', event, dataTransfer, target);

@@ -25,6 +25,7 @@ The custom event names are as follows.
   * touchdrag (equivalent of html5 drag)
   * touchdragenter (equivalent of html5 dragenter)
   * touchdragleave (equivalent of html5 dragleave)
+  * touchdragover (equivalent of html5 dragover)
   * touchdrop (equivalent of html5 drop)
   * touchdragend (equivalent of html5 dragend)
 

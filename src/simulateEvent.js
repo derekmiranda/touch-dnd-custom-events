@@ -3,6 +3,7 @@ const allowedEvents = {
   'touchdragend': null,
   'touchdragenter': null,
   'touchdragleave': null,
+  'touchdragover': null,
   'touchdragstart': null,
   'touchdrop': null
 };
