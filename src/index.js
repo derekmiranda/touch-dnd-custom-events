@@ -105,7 +105,12 @@ function handleTouchEnd (event) {
 export default function setupTouchDNDCustomEvents() {
   window.touchDndCustomEvents = touchDndCustomEvents;
 
-  document.addEventListener('touchstart', handleTouchStart, true);
-  document.addEventListener('touchend', handleTouchEnd, true);
-  document.addEventListener('touchmove', handleTouchMove, true);
+  var options = {
+    capture: true,
+    passive: false // indicate that the listener *WILL* call preventDefault()
+  }
+
+  document.addEventListener('touchstart', handleTouchStart, options);
+  document.addEventListener('touchend', handleTouchEnd, options);
+  document.addEventListener('touchmove', handleTouchMove, options);
 }
