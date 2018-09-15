@@ -80,6 +80,14 @@ function handleTouchEnd (event) {
 
     const x = event.changedTouches[0].clientX;
     const y = event.changedTouches[0].clientY;
+
+    // Ignore dragged preview and preview container w/ 'pointer-events: none' since can't get actual target
+    var preview = document.elementFromPoint(x, y);
+    preview.style.pointerEvents = 'none'
+
+    var previewContainer = document.elementFromPoint(x, y);
+    previewContainer.style.pointerEvents = 'none'
+
     const target = document.elementFromPoint(x, y);
 
     const dataTransfer = touchDndCustomEvents.dataTransfer;
